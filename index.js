@@ -51,13 +51,13 @@ EventManager.prototype.bind = function(event, method) {
   var target = this.target;
   var obj = this.obj;
   var bindings = this._bindings;
-  var method = method || 'on' + name;
+  var method = method || 'on' + event;
   var fn = obj[method].bind(obj);
 
-  target.on(name, fn);
+  target.on(event, fn);
 
-  bindings[name] = bindings[name] || {};
-  bindings[name][method] = fn;
+  bindings[event] = bindings[event] || {};
+  bindings[event][method] = fn;
 
   return this;
 };
@@ -77,20 +77,63 @@ EventManager.prototype.bind = function(event, method) {
  * @api public
  */
 
-EventManager.prototype.unbind = function(str, method) {
+EventManager.prototype.unbind = function(event, method) {
+  if (0 == arguments.length) {
+    return this.unbind_all();
+  }
+  if (1 == arguments.length) {
+    return this.unbind_all_of(event);
+  }
+  
   var target = this.target;
   var bindings = this._bindings;
-  var event = event;
-  var method = method || 'on' + name;
-  var fn;
+  var method = method || 'on' + event;
+  var fn = bindings[event][method];
 
-  if (bindings[name]) {
-    fn = bindings[name][method];
-    if (fn) {
-      target.off(event, fn);
-      delete bindings[name][method];
-    }
+  if (fn) {
+    target.off(event, fn);
+    delete bindings[event][method];
   }
+  
+  return this;
+};
+
+/**
+ * unbind_all
+ * Unbind all events.
+ *
+ * @api private
+ */
+
+EventManager.prototype.unbind_all = function() {
+  var bindings = this._bindings;
+  var event;
+  
+  for (event in bindings) {
+    this.unbind_all_of(event);
+  }
+
+  return this;
+};
+
+/**
+ * unbind_all_of
+ * Unbind all events for `event`.
+ *
+ * @param {String} event
+ * @api private
+ */
+
+EventManager.prototype.unbind_all_of = function(event) {
+  var bindings = this._bindings[event];
+  var method;
+
+  if (!bindings) return;
+
+  for (method in bindings) {
+    this.unbind(event, method);
+  }
+  delete this._bindings[event];
 
   return this;
 };

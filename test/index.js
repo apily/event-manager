@@ -39,13 +39,13 @@ describe('EventManager#bind(event, method)', function(){
 
     var e = events(list, {
       sort: function(col, order){
-        assert('name' == col);
-        assert('asc' == order);
+        // assert('name' == col);
+        // assert('asc' == order);
         done();
       }
     });
 
-    e.bind('click', 'sort', 'name', 'asc');
+    e.bind('click', 'sort');
     list.emit('click');
   })
 })
