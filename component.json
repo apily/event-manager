@@ -1,6 +1,6 @@
 {
   "name": "event-manager",
-  "repo": "apily/event-manager",
+  "repo": "component-mvc/event-manager",
   "version": "0.0.1",
   "description": "Event manager",
   "keywords": ["event", "events", "bind"],
