@@ -12,6 +12,13 @@
 
 module.exports = EventManager;
 
+/* 
+ * Utilities
+ */
+
+var object = {};
+var toString = object.toString;
+
 /*
  * EventManager
  * Create an event manager.
@@ -48,6 +55,10 @@ function EventManager(target, obj) {
  */
 
 EventManager.prototype.bind = function(event, method) {
+  if (toString.call(str) === '[object Object]') {
+    return this.bind_all(str);
+  }
+  
   var target = this.target;
   var obj = this.obj;
   var bindings = this._bindings;
@@ -59,6 +70,29 @@ EventManager.prototype.bind = function(event, method) {
   bindings[event] = bindings[event] || {};
   bindings[event][method] = fn;
 
+  return this;
+};
+
+/**
+ * bind_all
+ * Bind to `event` with optional `method` name
+ * for each pair `event`/`method` in `obj`
+ * When `method` is undefined it becomes `event`
+ * with the "on" prefix.
+ *
+ * @example
+ *    events.bind('login') // implies "onlogin"
+ *    events.bind('login', 'onLogin')
+ *
+ * @param {Object} obj pairs `event`/`method` to bind
+ * @return {DelegateManager} the event manager, for chaining
+ * @api public
+ */
+
+EventManager.prototype.bind_all = function(obj) {
+  Object.keys(obj).forEach(function(key) {
+    this.bind(key, obj[key]);
+  }, this);
   return this;
 };
 
