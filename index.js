@@ -55,8 +55,8 @@ function EventManager(target, obj) {
  */
 
 EventManager.prototype.bind = function(event, method) {
-  if (toString.call(str) === '[object Object]') {
-    return this.bind_all(str);
+  if (toString.call(event) === '[object Object]') {
+    return this.bind_all(event);
   }
   
   var target = this.target;
